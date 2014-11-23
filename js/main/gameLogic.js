@@ -101,8 +101,8 @@ define(['jquery'],function($){
 	}
 	function findCrossInColumn(){
 		var notInACol = 0;
-		var counterInCol = 0;
 		for(var rows=0,arrayLength = __mainArray.length; rows<arrayLength ; rows++){
+			var counterInCol = 0;
 			var flag = 0;
 			for(var cols=0,innerArrayLength = __mainArray[rows].length; cols<innerArrayLength ; cols++){
 				if(__mainArray[cols][rows]==1){
@@ -132,6 +132,46 @@ define(['jquery'],function($){
 		}
 		return notInACol;
 	}
+	function findCrossInADiagonal(){
+		var counterInDiag = 0;
+		var flag = 0;
+		var notInADiag =0;
+		for(var rows=0,arrayLength = __mainArray.length; rows<arrayLength ; rows++){
+			for(var cols=0,innerArrayLength = __mainArray[rows].length; cols<innerArrayLength ; cols++){
+				if(rows==cols){
+					if(__mainArray[rows][cols]==1){
+						if(counterInDiag==1){
+							for(var row=0,length = __mainArray.length; row<length ; row++){
+								for(var col=0,colLength = __mainArray[row].length; col<colLength ; col++){
+									if(row==col){
+										if(__mainArray[row][col]==0){
+											var column = findColumn(row,col);
+											putADot(column);
+											flag = 1;
+											break;
+										}
+									}
+								}
+								if(flag==1){
+									break;
+								}
+							}
+							
+						}
+						counterInDiag++;
+					}
+				}
+				if(flag==1){
+					break;
+				}
+			}
+			if(flag==1){
+				notInADiag =1;
+				break;
+			}
+		}
+		return notInADiag;
+	}
 	function calculateComputerMove(){
 		if(__userChance==1){
 			forkTheDot();
@@ -139,12 +179,16 @@ define(['jquery'],function($){
 		}
 		else{
 			var inARow = findCrossInRow();
-			var inAColumn = 0;
+			var inAColumn = 0, inADiagonal =0, isRightDiagonal = 0;
 			if(inARow==0){
 				inAColumn = findCrossInColumn();
+				alert(inAColumn);
 			}
 			if(inAColumn==0){
 				inADiagonal = findCrossInADiagonal();
+			}
+			if(inADiagonal==0){
+				isRightDiagonal = findCrossInRightDiagonal();
 			}
 		}
 	}
