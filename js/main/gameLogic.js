@@ -3,6 +3,8 @@ define(['jquery'],function($){
 	var __userChance = 0;
 	var __computerChance = 0;
 	var __mainArray;
+	var __computerArray=[];
+	var __userArray=[];
 	function createArray(){
 		var arr = [];
 		if(arguments.length>0){
@@ -376,18 +378,25 @@ define(['jquery'],function($){
 		for(var rows=0,arrayLength = __mainArray.length; rows<arrayLength ; rows++){
 			var userInARow=0;
 			var computerInARow=0;
+			__computerArray=[];
+			__userArray=[];
 			for(var cols=0,innerArrayLength = __mainArray[rows].length; cols<innerArrayLength ; cols++){
 				//alert('yo'+computerInARow);
 				
 				if(__mainArray[rows][cols]==1){
 					//alert("user rows"+rows+" "+cols+" "+userInARow);
+					var col = findColumn(cols,rows);
+					__userArray.push(col);
 					++userInARow;
 				}
 				else if(__mainArray[rows][cols]==2){
-					//alert("computer rows"+rows+" "+cols+" "+computerInARow);
+					var col = findColumn(cols,rows);
+					__computerArray.push(col);
+					//console.log("yo bitch",__computerArray);
 					++computerInARow;
 				}
 				if(computerInARow == 3){
+				console.log("yo bitch",__computerArray);
 					return 2;
 				}
 				if(userInARow == 3){
@@ -401,13 +410,19 @@ define(['jquery'],function($){
 		for(var cols=0,arrayLength = __mainArray[0].length; cols<arrayLength ; cols++){
 			var userInACol=0;
 			var computerInACol=0;
+			__computerArray=[];
+			__userArray=[];
 			for(var rows=0,innerArrayLength = __mainArray.length; rows<innerArrayLength ; rows++){
 				
 				if(__mainArray[rows][cols]==1){
 					++userInACol;
+					var col = findColumn(cols,rows);
+					__userArray.push(col);
 				}
 				else if(__mainArray[rows][cols]==2){
 					++computerInACol;
+					var col = findColumn(cols,rows);
+					__computerArray.push(col);
 				}
 				if(computerInACol == 3){
 					return 2;
@@ -422,6 +437,8 @@ define(['jquery'],function($){
 	function strikeInLeftDiagonal(){
 		var userInARow=0;
 		var computerInARow=0;
+		__computerArray=[];
+		__userArray=[];
 		for(var rows=0,arrayLength = __mainArray.length; rows<arrayLength ; rows++){
 			for(var cols=0,innerArrayLength = __mainArray[rows].length; cols<innerArrayLength ; cols++){
 				if(rows==cols){
@@ -429,10 +446,14 @@ define(['jquery'],function($){
 					if(__mainArray[rows][cols]==1){
 						//alert("user"+" "+rows+" "+cols+" "+userInARow);
 						++userInARow;
+						var col = findColumn(cols,rows);
+						__userArray.push(col);
 					}
 					else if(__mainArray[rows][cols]==2){
 						//alert("computer"+" "+rows+" "+cols+" "+computerInARow);
 						++computerInARow;
+						var col = findColumn(cols,rows);
+						__computerArray.push(col);
 					}
 					if(computerInARow == 3){
 						return 2;
@@ -448,15 +469,21 @@ define(['jquery'],function($){
 	function strikeInRightDiagonal(){
 		var userInARow=0;
 		var computerInARow=0;
+		__computerArray=[];
+		__userArray=[];
 		for(var rows=0,arrayLength = __mainArray.length; rows<arrayLength ; rows++){
 			for(var cols=0,innerArrayLength = __mainArray[rows].length; cols<innerArrayLength ; cols++){
 				if(rows+cols==__mainArray.length-1){
 					
 					if(__mainArray[rows][cols]==1){
 						++userInARow;
+						var col = findColumn(cols,rows);
+						__userArray.push(col);
 					}
 					else if(__mainArray[rows][cols]==2){
 						++computerInARow;
+						var col = findColumn(cols,rows);
+						__computerArray.push(col);
 					}
 					if(computerInARow == 3){
 						return 2;
@@ -467,7 +494,21 @@ define(['jquery'],function($){
 				}
 			}
 		}
+
 		return 0;
+	}
+	function highlightStrike(array,player){
+		for(var ii=0;ii<array.length;ii++){
+			$(array[ii]).addClass('highlight');
+		}
+		var winner = $('#winner');
+		winner.removeClass('hideMark');
+		if(player=="You"){
+			winner.children().eq(0).text("Congratulations, " +player+" win!!!");
+		}
+		else{
+			winner.children().eq(0).text("Looks like you cannot surpass " +player+"'s intellect!!!");
+		}
 	}
 	function addEventListenersForMatrix(){
 		$('td').on('click',function(event){
@@ -496,54 +537,46 @@ define(['jquery'],function($){
 			//alert(rowCracker);
 			if(rowCracker){
 				if(rowCracker==1){
-					setTimeout(function(){
-						alert("You Win From Row");
-					},500);
+					highlightStrike(__userArray,"You");
 				}
 				else if(rowCracker==2){
-					setTimeout(function(){
-						alert("Computer Wins From Row");
-					},500);
+					highlightStrike(__computerArray,"Computer");
 				}
+				$(document).off("findWinner");
+				$('td').off("click");
 			}
 			var columnCracker = strikeInAColumn();
 			if(columnCracker){
 				if(columnCracker==1){
-					setTimeout(function(){
-						alert("You Win From Col");
-					},500);
+					highlightStrike(__userArray,"You");
 				}
 				else if(columnCracker==2){
-					setTimeout(function(){
-						alert("Computer Wins From Col");
-					},500);
+					highlightStrike(__computerArray,"Computer");
 				}
+				$(document).off("findWinner");
+				$('td').off("click");
 			}
 			var leftDiagonal = strikeInLeftDiagonal();
 			if(leftDiagonal){
 				if(leftDiagonal==1){
-					setTimeout(function(){
-						alert("You Win From Left Diagonal");
-					},500);
+					highlightStrike(__userArray,"You");
 				}
 				else if(leftDiagonal==2){
-					setTimeout(function(){
-						alert("Computer Wins From Left Diagonal");
-					},500);
+					highlightStrike(__computerArray,"Computer");
 				}
+				$(document).off("findWinner");
+				$('td').off("click");
 			}
 			var rightDiagonal = strikeInRightDiagonal();
 			if(rightDiagonal){
 				if(rightDiagonal==1){
-					setTimeout(function(){
-						alert("You Win From Right Diagonal");
-					},500);
+					highlightStrike(__userArray,"You");
 				}
 				else if(rightDiagonal==2){
-					setTimeout(function(){
-						alert("Computer Wins From Right Diagonal");
-					},500);
+					highlightStrike(__computerArray,"Computer");
 				}
+				$(document).off("findWinner");
+				$('td').off("click");
 			}
 		})
 	}

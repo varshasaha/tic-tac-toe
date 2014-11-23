@@ -53,3 +53,18 @@ table tr:last-child td:last-child{
 	color: red;
 	font-size:30px;
 }
+.highlight{
+	border:3px solid #4387fd !important;
+}
+#winner{
+	width:300px;
+	padding:50px;
+	margin-right:auto;
+	margin-left:auto;
+	margin-top:50px;
+	border:3px solid #ffff00;
+	background:#ffffb2;
+	text-align:center;
+	font-weight:bold;
+	vertical-align:middle;
+}
