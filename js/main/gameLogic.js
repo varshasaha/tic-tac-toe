@@ -25,6 +25,10 @@ define(['jquery'],function($){
 		//$('td').trigger("putADot");
 		__counter++;
 		__userChance++;
+		if(__counter==4){
+			//alert("from user");
+			$(document).trigger("findWinner");
+		}
 	}
 	function fillMatrixWithMove(column,row){
 		__mainArray[row][column] = 1;
@@ -32,6 +36,7 @@ define(['jquery'],function($){
 	}
 	function fillMatrixWithComputerMove(column,row){
 		__mainArray[row][column] = 2;
+		//alert("filling matrix");
 		console.log("till now main array is",__mainArray);
 	}
 	function findColumn(column,row){
@@ -43,11 +48,11 @@ define(['jquery'],function($){
 	}
 	function putADot(column){
 		var dot = $('.dot').eq(0).clone(true);
-		setTimeout(function(){
+		//setTimeout(function(){
 			$(column).append(dot);
-		},200);
 		$(dot).removeClass('hideMark');
 		__counter++;
+		__computerChance++;
 	}
 	function forkTheDot(){
 		for(var rows=0,arrayLength = __mainArray.length; rows<arrayLength ; rows++){
@@ -58,6 +63,11 @@ define(['jquery'],function($){
 						var column = findColumn(cols,rows);
 						putADot(column);
 						fillMatrixWithComputerMove(cols,rows);
+						//alert("counter "+__counter);
+						if(__counter>=4){
+								//alert("from computer");
+								$(document).trigger("findWinner");
+						}
 						flag = 1;
 						break;
 					}
@@ -68,14 +78,14 @@ define(['jquery'],function($){
 			}
 		}
 	}
-	function findCrossInRow(){
+	function findCrossInRow(val){
 		var notInARow = 0;
 		for(var rows=0,arrayLength = __mainArray.length; rows<arrayLength ; rows++){
 			var flag = 0;
 			var counterInRow = 0;
 			for(var cols=0,innerArrayLength = __mainArray[rows].length; cols<innerArrayLength ; cols++){
-				if(__mainArray[rows][cols]==1){
-					//alert("at "+rows+" "+cols+" =1");
+				if(__mainArray[rows][cols]==val){
+					//alert("at "+rows+" "+cols);
 					if(counterInRow == 1){
 						for(var col=0,length = __mainArray[rows].length; col<length ; col++){
 							if(__mainArray[rows][col]==0){
@@ -83,6 +93,11 @@ define(['jquery'],function($){
 								//alert("column");
 								putADot(column);
 								fillMatrixWithComputerMove(col,rows);
+								//alert("counter "+__counter);
+								if(__counter>=4){
+									//alert("from computer");
+									$(document).trigger("findWinner");
+								}
 								flag = 1;
 								break;
 							}
@@ -105,13 +120,13 @@ define(['jquery'],function($){
 		}
 		return notInARow;
 	}
-	function findCrossInColumn(){
+	function findCrossInColumn(val){
 		var notInACol = 0;
 		for(var rows=0,arrayLength = __mainArray.length; rows<arrayLength ; rows++){
 			var counterInCol = 0;
 			var flag = 0;
 			for(var cols=0,innerArrayLength = __mainArray[rows].length; cols<innerArrayLength ; cols++){
-				if(__mainArray[cols][rows]==1){
+				if(__mainArray[cols][rows]==val){
 					if(counterInCol == 1){
 						for(var col=0,length = __mainArray[rows].length; col<length ; col++){
 							if(__mainArray[col][rows]==0){
@@ -119,6 +134,11 @@ define(['jquery'],function($){
 								putADot(column);
 								flag = 1;
 								fillMatrixWithComputerMove(rows,col);
+								//alert("counter "+__counter);
+								if(__counter>=4){
+									//alert("from computer");
+									$(document).trigger("findWinner");
+								}
 								break;
 							}
 						}
@@ -139,14 +159,14 @@ define(['jquery'],function($){
 		}
 		return notInACol;
 	}
-	function findCrossInADiagonal(){
+	function findCrossInADiagonal(val){
 		var counterInDiag = 0;
 		var flag = 0;
 		var notInADiag =0;
 		for(var rows=0,arrayLength = __mainArray.length; rows<arrayLength ; rows++){
 			for(var cols=0,innerArrayLength = __mainArray[rows].length; cols<innerArrayLength ; cols++){
 				if(rows==cols){
-					if(__mainArray[rows][cols]==1){
+					if(__mainArray[rows][cols]==val){
 						if(counterInDiag==1){
 							for(var row=0,length = __mainArray.length; row<length ; row++){
 								for(var col=0,colLength = __mainArray[row].length; col<colLength ; col++){
@@ -155,7 +175,12 @@ define(['jquery'],function($){
 											var column = findColumn(row,col);
 											putADot(column);
 											flag = 1;
-											fillMatrixWithComputerMove(row,col);
+											fillMatrixWithComputerMove(col,row);
+											//alert("counter "+__counter);
+											if(__counter>=4){
+												//alert("from computer");
+												$(document).trigger("findWinner");
+											}
 											break;
 										}
 									}
@@ -180,14 +205,14 @@ define(['jquery'],function($){
 		}
 		return notInADiag;
 	}
-	function findCrossInRightDiagonal(){
+	function findCrossInRightDiagonal(val){
 		var counterInDiag = 0;
 		var flag = 0;
 		var notInADiag =0;
 		for(var rows=0,arrayLength = __mainArray.length; rows<arrayLength ; rows++){
 			for(var cols=0,innerArrayLength = __mainArray[rows].length; cols<innerArrayLength ; cols++){
 				if(rows+cols==__mainArray.length-1){
-					if(__mainArray[rows][cols]==1){
+					if(__mainArray[rows][cols]==val){
 						if(counterInDiag==1){
 							for(var row=0,length = __mainArray.length; row<length ; row++){
 								for(var col=0,colLength = __mainArray[row].length; col<colLength ; col++){
@@ -197,6 +222,11 @@ define(['jquery'],function($){
 											putADot(column);
 											flag = 1;
 											fillMatrixWithComputerMove(col,row);
+											//alert("counter "+__counter);
+											if(__counter>=4){
+												//alert("from computer");
+												$(document).trigger("findWinner");
+											}
 											break;
 										}
 									}
@@ -221,43 +251,301 @@ define(['jquery'],function($){
 		}
 		return notInADiag;
 	}
+	function markComputerMoveInCenter(){
+		var marked = 0;
+		if(__mainArray[1][1]==0){
+			var column = findColumn(1,1);
+			putADot(column);
+			fillMatrixWithComputerMove(1,1);
+			//alert("counter "+__counter);
+			if(__counter>=4){
+				//alert("from computer");
+				$(document).trigger("findWinner")
+			}
+			marked = 1;
+		}
+		return marked;
+	}
+	function markRandomComputerMove(){
+	//alert("random move");
+		var rows = __mainArray.length;
+		var cols = __mainArray[0].length;
+		var row = Math.floor(Math.random() * rows);
+		var col = Math.floor(Math.random() * cols);
+		if(__mainArray[row][col]==0){
+			//alert()
+			var column = findColumn(col,row);
+			putADot(column);
+			fillMatrixWithComputerMove(col,row);
+			//alert("counter "+__counter);
+			if(__counter>=4){
+				//alert("from computer");
+				$(document).trigger("findWinner");
+			}
+		}
+		else{
+			markRandomComputerMove();
+		}
+	}
+	function playToWin(){
+			var inARow = findCrossInRow(2);
+			var inAColumn = 0, inADiagonal =0, isRightDiagonal = 0;
+			if(inARow==0){
+				//alert("no row");
+				inAColumn = findCrossInColumn(2);
+				if(inAColumn==0){
+					//alert("no column");
+					inADiagonal = findCrossInADiagonal(2);
+					if(inADiagonal==0){
+						//alert("no left");
+						isRightDiagonal = findCrossInRightDiagonal(2);
+					}
+				}
+				else{
+					//alert("yes column");
+				}
+			}
+			if(inARow==0&&inAColumn==0&&inADiagonal==0&&isRightDiagonal==0){
+				//alert("no anything");
+				return 0;
+			}
+			return 1;
+	}
 	function calculateComputerMove(){
 		if(__userChance==1){
-			forkTheDot();
+			var mark = markComputerMoveInCenter();
+			if(!mark){
+				forkTheDot();
+			}
 			__computerChance++;
 		}
 		else{
-			var inARow = findCrossInRow();
+			var playWin = playToWin();
+			if(!playWin){
+			//alert("doesnt wanna win");
+			var inARow = findCrossInRow(1);
 			var inAColumn = 0, inADiagonal =0, isRightDiagonal = 0;
 			if(inARow==0){
-				inAColumn = findCrossInColumn();
-			}
-			if(inAColumn==0){
-				inADiagonal = findCrossInADiagonal();
-			}
-			if(inADiagonal==0){
-				isRightDiagonal = findCrossInRightDiagonal();
+			//alert("no row");
+				inAColumn = findCrossInColumn(1);
+				
+				if(inAColumn==0){
+				//alert("no column");
+					inADiagonal = findCrossInADiagonal(1);
+					
+					if(inADiagonal==0){
+						//alert("no left");
+						isRightDiagonal = findCrossInRightDiagonal(1);
+						if(isRightDiagonal==0){
+							//alert("no right");
+							markRandomComputerMove();
+						}
+					}
+				}
+			}	
 			}
 		}
+		//$(document).trigger("findWinner");
+	}
+	function checkIfFreeCellsExist(){
+		var flag = 0;
+		for(var rows=0,arrayLength = __mainArray.length; rows<arrayLength ; rows++){
+			for(var cols=0,innerArrayLength = __mainArray[rows].length; cols<innerArrayLength ; cols++){
+				if(__mainArray[rows][cols]==0){
+					flag=1;
+					break;
+				}
+			}
+			if(flag==1){
+				break;
+			}
+		}
+		if(flag==1){
+			return 1;
+		}
+		return 0;
+	}
+	function checkIfCellAlreadyFilled(col,row){
+		if(__mainArray[row][col]==0){
+			return 0;
+		}
+		return 1;
+	}
+	function strikeInARow(){
+		//alert("checking strike in a row");
+		for(var rows=0,arrayLength = __mainArray.length; rows<arrayLength ; rows++){
+			var userInARow=0;
+			var computerInARow=0;
+			for(var cols=0,innerArrayLength = __mainArray[rows].length; cols<innerArrayLength ; cols++){
+				//alert('yo'+computerInARow);
+				
+				if(__mainArray[rows][cols]==1){
+					//alert("user rows"+rows+" "+cols+" "+userInARow);
+					++userInARow;
+				}
+				else if(__mainArray[rows][cols]==2){
+					//alert("computer rows"+rows+" "+cols+" "+computerInARow);
+					++computerInARow;
+				}
+				if(computerInARow == 3){
+					return 2;
+				}
+				if(userInARow == 3){
+					return 1;
+				}
+			}
+		}
+		return 0;
+	}
+	function strikeInAColumn(){
+		for(var cols=0,arrayLength = __mainArray[0].length; cols<arrayLength ; cols++){
+			var userInACol=0;
+			var computerInACol=0;
+			for(var rows=0,innerArrayLength = __mainArray.length; rows<innerArrayLength ; rows++){
+				
+				if(__mainArray[rows][cols]==1){
+					++userInACol;
+				}
+				else if(__mainArray[rows][cols]==2){
+					++computerInACol;
+				}
+				if(computerInACol == 3){
+					return 2;
+				}
+				if(userInACol == 3){
+					return 1;
+				}
+			}
+		}
+		return 0;
+	}
+	function strikeInLeftDiagonal(){
+		var userInARow=0;
+		var computerInARow=0;
+		for(var rows=0,arrayLength = __mainArray.length; rows<arrayLength ; rows++){
+			for(var cols=0,innerArrayLength = __mainArray[rows].length; cols<innerArrayLength ; cols++){
+				if(rows==cols){
+					
+					if(__mainArray[rows][cols]==1){
+						//alert("user"+" "+rows+" "+cols+" "+userInARow);
+						++userInARow;
+					}
+					else if(__mainArray[rows][cols]==2){
+						//alert("computer"+" "+rows+" "+cols+" "+computerInARow);
+						++computerInARow;
+					}
+					if(computerInARow == 3){
+						return 2;
+					}
+					if(userInARow == 3){
+						return 1;
+					}
+				}
+			}
+		}
+		return 0;
+	}
+	function strikeInRightDiagonal(){
+		var userInARow=0;
+		var computerInARow=0;
+		for(var rows=0,arrayLength = __mainArray.length; rows<arrayLength ; rows++){
+			for(var cols=0,innerArrayLength = __mainArray[rows].length; cols<innerArrayLength ; cols++){
+				if(rows+cols==__mainArray.length-1){
+					
+					if(__mainArray[rows][cols]==1){
+						++userInARow;
+					}
+					else if(__mainArray[rows][cols]==2){
+						++computerInARow;
+					}
+					if(computerInARow == 3){
+						return 2;
+					}
+					if(userInARow == 3){
+						return 1;
+					}
+				}
+			}
+		}
+		return 0;
 	}
 	function addEventListenersForMatrix(){
 		$('td').on('click',function(event){
-			if(__counter%2==0){
-				var clickedColumn = $(this);
-				var column = clickedColumn.parent().children().index(clickedColumn);
-				var row = clickedColumn.parent().parent().children().index(clickedColumn.parent());
-				putACross(clickedColumn);
-				fillMatrixWithMove(column,row);
-				calculateComputerMove();
-			}
-			else{
-				alert("its computer's turn baby!");
-			}
+				if(__counter%2==0){
+					var clickedColumn = $(this);
+					var column = clickedColumn.parent().children().index(clickedColumn);
+					var row = clickedColumn.parent().parent().children().index(clickedColumn.parent());
+					if(!checkIfCellAlreadyFilled(column,row)){
+						putACross(clickedColumn);
+						fillMatrixWithMove(column,row);
+						if(checkIfFreeCellsExist()){
+							calculateComputerMove();
+						}
+						else{
+							alert("game over!");
+						}
+					}
+				}
+				else{
+					alert("its computer's turn baby!");
+				}
+			
 		});
-		/*$('td').on("putADot",function(){
-			console.log($(this));
-			//alert("kindly put a dot");
-		})*/
+		$(document).on("findWinner",function(){
+			var rowCracker = strikeInARow();
+			//alert(rowCracker);
+			if(rowCracker){
+				if(rowCracker==1){
+					setTimeout(function(){
+						alert("You Win From Row");
+					},500);
+				}
+				else if(rowCracker==2){
+					setTimeout(function(){
+						alert("Computer Wins From Row");
+					},500);
+				}
+			}
+			var columnCracker = strikeInAColumn();
+			if(columnCracker){
+				if(columnCracker==1){
+					setTimeout(function(){
+						alert("You Win From Col");
+					},500);
+				}
+				else if(columnCracker==2){
+					setTimeout(function(){
+						alert("Computer Wins From Col");
+					},500);
+				}
+			}
+			var leftDiagonal = strikeInLeftDiagonal();
+			if(leftDiagonal){
+				if(leftDiagonal==1){
+					setTimeout(function(){
+						alert("You Win From Left Diagonal");
+					},500);
+				}
+				else if(leftDiagonal==2){
+					setTimeout(function(){
+						alert("Computer Wins From Left Diagonal");
+					},500);
+				}
+			}
+			var rightDiagonal = strikeInRightDiagonal();
+			if(rightDiagonal){
+				if(rightDiagonal==1){
+					setTimeout(function(){
+						alert("You Win From Right Diagonal");
+					},500);
+				}
+				else if(rightDiagonal==2){
+					setTimeout(function(){
+						alert("Computer Wins From Right Diagonal");
+					},500);
+				}
+			}
+		})
 	}
 	return{
 		createGameMatrix : createGameMatrix(),
