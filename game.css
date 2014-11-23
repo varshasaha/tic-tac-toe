@@ -32,14 +32,16 @@ table tr:last-child td:last-child{
 .hideMark{
 	display: none;
 }
-#cross{
+.cross{
 	height: 30px;
 	width:2px;
 	background: blue;
 	transform:rotate(-45deg);
 	position:relative;
+	margin-right:auto;
+	margin-left:auto;
 }
-#cross::before{
+.cross::before{
 	height: 30px;
 	width:2px;
 	background: blue;
@@ -47,7 +49,7 @@ table tr:last-child td:last-child{
 	position:absolute;
 	content:""
 }
-#dot{
-	color: blue;
+.dot{
+	color: red;
 	font-size:30px;
 }
