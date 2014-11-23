@@ -30,6 +30,10 @@ define(['jquery'],function($){
 		__mainArray[row][column] = 1;
 		console.log("till now main array is",__mainArray);
 	}
+	function fillMatrixWithComputerMove(column,row){
+		__mainArray[row][column] = 2;
+		console.log("till now main array is",__mainArray);
+	}
 	function findColumn(column,row){
 		var currentRow = $('tbody').children().eq(row);
 		console.log('row'+currentRow);
@@ -53,6 +57,7 @@ define(['jquery'],function($){
 					if(__mainArray[rows][cols] == 0){
 						var column = findColumn(cols,rows);
 						putADot(column);
+						fillMatrixWithComputerMove(cols,rows);
 						flag = 1;
 						break;
 					}
@@ -77,6 +82,7 @@ define(['jquery'],function($){
 								var column = findColumn(col,rows);
 								//alert("column");
 								putADot(column);
+								fillMatrixWithComputerMove(col,rows);
 								flag = 1;
 								break;
 							}
@@ -112,6 +118,7 @@ define(['jquery'],function($){
 								var column = findColumn(rows,col);
 								putADot(column);
 								flag = 1;
+								fillMatrixWithComputerMove(rows,col);
 								break;
 							}
 						}
@@ -148,6 +155,48 @@ define(['jquery'],function($){
 											var column = findColumn(row,col);
 											putADot(column);
 											flag = 1;
+											fillMatrixWithComputerMove(row,col);
+											break;
+										}
+									}
+								}
+								if(flag==1){
+									break;
+								}
+							}
+							
+						}
+						counterInDiag++;
+					}
+				}
+				if(flag==1){
+					break;
+				}
+			}
+			if(flag==1){
+				notInADiag =1;
+				break;
+			}
+		}
+		return notInADiag;
+	}
+	function findCrossInRightDiagonal(){
+		var counterInDiag = 0;
+		var flag = 0;
+		var notInADiag =0;
+		for(var rows=0,arrayLength = __mainArray.length; rows<arrayLength ; rows++){
+			for(var cols=0,innerArrayLength = __mainArray[rows].length; cols<innerArrayLength ; cols++){
+				if(rows+cols==__mainArray.length-1){
+					if(__mainArray[rows][cols]==1){
+						if(counterInDiag==1){
+							for(var row=0,length = __mainArray.length; row<length ; row++){
+								for(var col=0,colLength = __mainArray[row].length; col<colLength ; col++){
+									if(row+col==__mainArray.length-1){
+										if(__mainArray[row][col]==0){
+											var column = findColumn(col,row);
+											putADot(column);
+											flag = 1;
+											fillMatrixWithComputerMove(col,row);
 											break;
 										}
 									}
@@ -182,7 +231,6 @@ define(['jquery'],function($){
 			var inAColumn = 0, inADiagonal =0, isRightDiagonal = 0;
 			if(inARow==0){
 				inAColumn = findCrossInColumn();
-				alert(inAColumn);
 			}
 			if(inAColumn==0){
 				inADiagonal = findCrossInADiagonal();
