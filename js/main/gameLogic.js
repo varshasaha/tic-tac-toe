@@ -41,7 +41,7 @@ define(['jquery'],function($){
 		var dot = $('.dot').eq(0).clone(true);
 		setTimeout(function(){
 			$(column).append(dot);
-		},500);
+		},200);
 		$(dot).removeClass('hideMark');
 		__counter++;
 	}
@@ -64,33 +64,73 @@ define(['jquery'],function($){
 		}
 	}
 	function findCrossInRow(){
+		var notInARow = 0;
 		for(var rows=0,arrayLength = __mainArray.length; rows<arrayLength ; rows++){
-			var counterInRow =0;
 			var flag = 0;
+			var counterInRow = 0;
 			for(var cols=0,innerArrayLength = __mainArray[rows].length; cols<innerArrayLength ; cols++){
-				if(rows==cols){
-					if(__mainArray[rows][cols]==1){
-						if(counterInRow>0){
-							for(var col=0,innerArrayLength = __mainArray[rows].length; col<innerArrayLength ; col++){
-								if(__mainArray[rows][col]==0){
-									var column = findColumn(col,rows);
-									putADot(column);
-									flag = 1;
-									break;
-								}
+				if(__mainArray[rows][cols]==1){
+					//alert("at "+rows+" "+cols+" =1");
+					if(counterInRow == 1){
+						for(var col=0,length = __mainArray[rows].length; col<length ; col++){
+							if(__mainArray[rows][col]==0){
+								var column = findColumn(col,rows);
+								//alert("column");
+								putADot(column);
+								flag = 1;
+								break;
 							}
 						}
 						counterInRow++;
 					}
+					else{
+						counterInRow++;
+						continue;
+					}
 				}
-				if(flag ==1){
+				if(flag==1){
 					break;
 				}
 			}
-			if(flag ==1){
-					break;
+			if(flag==1){
+				notInARow = 1;
+				break;
 			}
 		}
+		return notInARow;
+	}
+	function findCrossInColumn(){
+		var notInACol = 0;
+		var counterInCol = 0;
+		for(var rows=0,arrayLength = __mainArray.length; rows<arrayLength ; rows++){
+			var flag = 0;
+			for(var cols=0,innerArrayLength = __mainArray[rows].length; cols<innerArrayLength ; cols++){
+				if(__mainArray[cols][rows]==1){
+					if(counterInCol == 1){
+						for(var col=0,length = __mainArray[rows].length; col<length ; col++){
+							if(__mainArray[col][rows]==0){
+								var column = findColumn(rows,col);
+								putADot(column);
+								flag = 1;
+								break;
+							}
+						}
+						counterInCol++;
+					}
+					else{
+						counterInCol++;
+					}
+				}
+				if(flag==1){
+					break;
+				}
+			}
+			if(flag==1){
+				notInACol = 1;
+				break;
+			}
+		}
+		return notInACol;
 	}
 	function calculateComputerMove(){
 		if(__userChance==1){
@@ -98,7 +138,14 @@ define(['jquery'],function($){
 			__computerChance++;
 		}
 		else{
-			findCrossInRow();
+			var inARow = findCrossInRow();
+			var inAColumn = 0;
+			if(inARow==0){
+				inAColumn = findCrossInColumn();
+			}
+			if(inAColumn==0){
+				inADiagonal = findCrossInADiagonal();
+			}
 		}
 	}
 	function addEventListenersForMatrix(){
