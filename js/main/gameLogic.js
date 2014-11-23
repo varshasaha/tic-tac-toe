@@ -504,10 +504,13 @@ define(['jquery'],function($){
 		var winner = $('#winner');
 		winner.removeClass('hideMark');
 		if(player=="You"){
-			winner.children().eq(0).text("Congratulations, " +player+" win!!!");
+			winner.children().eq(0).text("Congratulations, " +player+" win!");
+		}
+		else if(player=="Computer"){
+			winner.children().eq(0).text("Looks like you cannot surpass " +player+"'s intellect!");
 		}
 		else{
-			winner.children().eq(0).text("Looks like you cannot surpass " +player+"'s intellect!!!");
+			winner.children().eq(0).text("No Losers here , its a " +player);
 		}
 	}
 	function addEventListenersForMatrix(){
@@ -523,7 +526,7 @@ define(['jquery'],function($){
 							calculateComputerMove();
 						}
 						else{
-							alert("game over!");
+							highlightStrike([],"Draw");
 						}
 					}
 				}
